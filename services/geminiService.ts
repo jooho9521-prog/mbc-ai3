@@ -2,10 +2,10 @@
 import { GoogleGenAI, Type } from "@google/genai";
 import { MealTime, Recipe } from "../types";
 
-// API 키를 환경 변수에서 직접 가져와 초기화합니다.
-const ai = new GoogleGenAI({ apiKey: process.env.API_KEY });
-
 export const getRecipeSuggestions = async (ingredients: string[], mealTime: MealTime): Promise<Recipe[]> => {
+  // 호출 시점에 인스턴스를 생성하여 환경 변수 접근의 안정성을 높입니다.
+  const ai = new GoogleGenAI({ apiKey: process.env.API_KEY });
+
   try {
     const response = await ai.models.generateContent({
       model: "gemini-3-flash-preview",

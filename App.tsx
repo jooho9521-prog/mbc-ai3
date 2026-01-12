@@ -158,7 +158,7 @@ const App: React.FC = () => {
 
         {/* Error Message */}
         {error && (
-          <div className="mt-6 p-4 bg-red-50 text-red-600 rounded-2xl text-sm font-medium border border-red-100 flex items-start animate-bounce">
+          <div className="mt-6 p-4 bg-red-50 text-red-600 rounded-2xl text-sm font-medium border border-red-100 flex items-start">
             <i className="fa-solid fa-circle-exclamation mr-2 mt-0.5"></i>
             <span>{error}</span>
           </div>
