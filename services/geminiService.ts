@@ -2,7 +2,8 @@
 import { GoogleGenAI, Type } from "@google/genai";
 import { MealTime, Recipe } from "../types";
 
-const ai = new GoogleGenAI({ apiKey: process.env.API_KEY || '' });
+// API 키를 환경 변수에서 직접 가져와 초기화합니다.
+const ai = new GoogleGenAI({ apiKey: process.env.API_KEY });
 
 export const getRecipeSuggestions = async (ingredients: string[], mealTime: MealTime): Promise<Recipe[]> => {
   try {
@@ -10,6 +11,7 @@ export const getRecipeSuggestions = async (ingredients: string[], mealTime: Meal
       model: "gemini-3-flash-preview",
       contents: `다음 재료들을 활용하여 ${mealTime} 식사에 적합한 요리 레시피 3가지를 추천해줘: ${ingredients.join(', ')}`,
       config: {
+        systemInstruction: "당신은 냉장고 속 남은 재료를 활용해 최고의 요리를 제안하는 전문 쉐프입니다. 반드시 제공된 JSON 스키마에 맞춰 응답하세요. 한국어로 답변하세요.",
         responseMimeType: "application/json",
         responseSchema: {
           type: Type.ARRAY,
@@ -37,10 +39,14 @@ export const getRecipeSuggestions = async (ingredients: string[], mealTime: Meal
       }
     });
 
-    const jsonStr = response.text.trim();
+    const jsonStr = response.text?.trim();
+    if (!jsonStr) {
+      throw new Error("모델로부터 응답을 받지 못했습니다.");
+    }
+
     return JSON.parse(jsonStr);
   } catch (error) {
-    console.error("Gemini API Error:", error);
-    throw new Error("레시피를 가져오는 데 실패했습니다.");
+    console.error("Gemini API Error Detail:", error);
+    throw error;
   }
 };

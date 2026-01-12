@@ -42,21 +42,26 @@ const App: React.FC = () => {
     try {
       const suggestions = await getRecipeSuggestions(ingredients, mealTime);
       setRecipes(suggestions);
-      // 스크롤 이동
+      
+      // 결과 영역으로 부드럽게 스크롤
       setTimeout(() => {
-        window.scrollTo({ top: document.getElementById('results')?.offsetTop ?? 0, behavior: 'smooth' });
+        const resultsElement = document.getElementById('results');
+        if (resultsElement) {
+          resultsElement.scrollIntoView({ behavior: 'smooth' });
+        }
       }, 100);
-    } catch (err) {
-      setError('레시피를 생성하는 중 오류가 발생했습니다. 다시 시도해 주세요.');
+    } catch (err: any) {
+      console.error("Recipe Generation Error:", err);
+      setError('레시피를 생성하는 중 오류가 발생했습니다. 재료를 조금 더 구체적으로 적거나 다시 시도해 주세요.');
     } finally {
       setIsLoading(false);
     }
   };
 
   return (
-    <div className="min-h-screen pb-20">
+    <div className="min-h-screen pb-20 bg-slate-50">
       {/* Header */}
-      <header className="bg-emerald-600 text-white py-8 px-4 text-center shadow-lg rounded-b-[3rem] mb-8">
+      <header className="bg-emerald-600 text-white py-10 px-4 text-center shadow-lg rounded-b-[3rem] mb-8">
         <h1 className="text-3xl font-extrabold mb-2 tracking-tight">
           <i className="fa-solid fa-refrigerator mr-2"></i>
           냉장고 파먹기 요리사
@@ -144,7 +149,7 @@ const App: React.FC = () => {
           {isLoading ? (
             <span className="flex items-center justify-center">
               <i className="fa-solid fa-spinner fa-spin mr-2"></i>
-              레시피 만드는 중...
+              AI 요리사가 고민 중...
             </span>
           ) : (
             'AI 요리사에게 추천 받기'
@@ -153,15 +158,15 @@ const App: React.FC = () => {
 
         {/* Error Message */}
         {error && (
-          <div className="mt-6 p-4 bg-red-50 text-red-600 rounded-2xl text-sm font-medium border border-red-100 flex items-center">
-            <i className="fa-solid fa-circle-exclamation mr-2"></i>
-            {error}
+          <div className="mt-6 p-4 bg-red-50 text-red-600 rounded-2xl text-sm font-medium border border-red-100 flex items-start animate-bounce">
+            <i className="fa-solid fa-circle-exclamation mr-2 mt-0.5"></i>
+            <span>{error}</span>
           </div>
         )}
 
         {/* Results */}
         {(recipes.length > 0 || isLoading) && (
-          <div id="results" className="mt-12">
+          <div id="results" className="mt-12 scroll-mt-10">
             <h2 className="text-xl font-bold text-slate-800 mb-6 flex items-center px-1">
               <i className="fa-solid fa-kitchen-set mr-2 text-emerald-600"></i>
               AI 요리사의 추천 레시피
@@ -191,8 +196,8 @@ const App: React.FC = () => {
 
       {/* Footer */}
       <footer className="mt-20 text-center text-slate-400 text-xs px-4">
-        <p>© 2024 AI Fridge Chef. All rights reserved.</p>
-        <p className="mt-1">AI가 생성한 레시피이므로 조리 시 안전에 유의해 주세요.</p>
+        <p>© 2025 AI Fridge Chef. All rights reserved.</p>
+        <p className="mt-1">AI가 제안하는 레시피이므로 실제 조리 시 재료 상태에 유의하세요.</p>
       </footer>
     </div>
   );
